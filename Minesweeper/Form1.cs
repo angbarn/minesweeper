@@ -42,7 +42,7 @@ namespace Minesweeper
                     {
                         buttonList[indexAbove].Hide();
                     }
-                    if ((indexLeft >= 0) & ((int)(i / gridWidth) == (int)(indexRight / gridWidth)))
+                    if ((indexLeft >= 0) & ((int)(i / gridWidth) == (int)(indexLeft / gridWidth)))
                     {
                         buttonList[indexLeft].Hide();
                     }
@@ -76,7 +76,7 @@ namespace Minesweeper
                     buttonNew.Name = "button_" + x.ToString() + "_" + y.ToString();
                     buttonNew.Size = new System.Drawing.Size(buttonDimensions, buttonDimensions);
                     buttonNew.TabIndex = 0;
-                    buttonNew.Text = "";
+                    buttonNew.Text = x.ToString();
                     buttonNew.UseVisualStyleBackColor = true;
 
                     buttonNew.Click += new EventHandler(mineButtonClick);
