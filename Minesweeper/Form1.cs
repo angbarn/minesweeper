@@ -159,7 +159,10 @@ namespace Minesweeper
                     {
                         continue;
                     }
-                    if ((onlyMined) & (adjacentCell.isMined()))
+                    if ((onlyMined) & (!adjacentCell.isMined()))
+                    {
+                        continue;
+                    }
                     adjacentCellsList.Add(adjacentCell);
                 }
             }
@@ -275,6 +278,7 @@ namespace Minesweeper
                     if (adjacentCells.Count == 0)
                     {
                         state = cellState.empty;
+                        adjacentCells = parent.getAdjacentCells(position, false);
                         for (int i = 0; i < adjacentCells.Count; i++)
                         {
                             adjacentCells[i].activate();
