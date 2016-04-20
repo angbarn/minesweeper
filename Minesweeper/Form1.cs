@@ -13,27 +13,47 @@ namespace Minesweeper
     enum cellState { normal, flagged, unsure, empty, numbered, exploded };
     public class Coordinate
     {
+        /// <summary>
+        /// A coordinate
+        /// </summary>
         private int xOrdinate;
         private int yOrdinate;
 
         public Coordinate(int x, int y)
         {
+            ///<summary>
+            ///A coordinate
+            ///</summary>
+            ///<param name="x">The x ordinate</param>
+            ///<param name="y">The y ordinate</param>
             xOrdinate = x;
             yOrdinate = y;
         }
 
         public int[] get()
         {
+            ///<summary>Gets the coordinate</summary>
+            ///<returns>
+            ///The coordinates as an integer array, [x, y]
+            ///</returns>
             return new int[] { xOrdinate, yOrdinate };
         }
         public void set(int x, int y)
         {
+            ///<summary>
+            ///Sets the coordinates
+            ///</summary>
+            ///<param name="x">The x coordinate</param>
+            ///<param name="y">The y coordinate</param>
             xOrdinate = x;
             yOrdinate = y;
         }
     }
     public class GameGrid
     {
+        /// <summary>
+        /// A grid of cells. Each cell keeps track of its own state.
+        /// </summary>
         List<GridCell> cellList;
         public int buttonDimensions;
         public int gridWidth;
@@ -42,10 +62,24 @@ namespace Minesweeper
         {
             this.gridWidth = gridWidth;
             this.gridHeight = gridHeight;
+
         }
-        public GridCell[] GetAdjacentCells(index)
+
+        public GridCell[] getAdjacentCells(Coordinate)
         {
-            
+            return new GridCell[] { };
+        }
+
+        private void populateGrid()
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                for (int x = 0; x < gridWidth; x++)
+                {
+                    GridCell newCell = new GridCell(this, new Coordinate(x, y));
+
+                }
+            }
         }
     }
     public class GridCell
@@ -54,21 +88,21 @@ namespace Minesweeper
         Button cellButton;
         bool mined;
         cellState state;
-        int index;
+        Coordinate coordinate;
 
-        public GridCell(GameGrid parentGrid, int assignedIndex)
+        public GridCell(GameGrid parentGrid, Coordinate assignedIndex)
         {
             parent = parentGrid;
             state = cellState.normal;
             mined = false;
-            index = assignedIndex;
+            coordinate = assignedIndex;
         }
         private Button CreateButton()
         {
             Button newButton = new Button;
 
-            int locationX = parent.buttonDimensions * (index % parent.gridWidth);
-            int locationY = parent.buttonDimensions * (int)(index / parent.gridWidth);
+            int locationX = parent.buttonDimensions * coordinate.get()[0];
+            int locationY = parent.buttonDimensions * coordinate.get()[1];
             newButton.Location = new Point(locationX, locationY);
 
             newButton.Name = "button_" + locationX.ToString() + "_" + locationY.ToString();
