@@ -159,7 +159,7 @@ namespace Minesweeper
                     cellArray[x, y] = newCell;
                 }
             }
-
+            parentForm.ResumeLayout(false);
         }
     }
     /// <summary>
