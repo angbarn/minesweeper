@@ -66,13 +66,15 @@ namespace Minesweeper
     public class GameGrid
     {
         /// <summary>The array of <typeparamref name="GridCell"/> instances making up the game board</summary>
-        private GridCell[,] cellList;
+        private GridCell[,] cellArray;
         /// <summary>The dimensions of the buttons on screen that represent the cells</summary>
         public int buttonDimensions;
         /// <summary>The width of the game board, in cells</summary>
         public int gridWidth;
         /// <summary>The height of the game board, in cells</summary>
         public int gridHeight;
+        private Form1 parent;
+
         /// <summary>
         /// A grid of cells that make up a game. Each cell will keep track of its own state.
         /// </summary>
@@ -82,7 +84,7 @@ namespace Minesweeper
         {
             gridWidth = width;
             gridHeight = height;
-            cellList = new GridCell[gridWidth, gridHeight];
+            cellArray = new GridCell[gridWidth, gridHeight];
         }
         /// <summary>
         /// Gets a specific cell from <paramref name="cellList"/> based on a specified location
@@ -91,7 +93,7 @@ namespace Minesweeper
         /// <returns>Cell from <paramref name="cellList"/></returns>
         public GridCell getCell(Coordinate cellCoordinate)
         {
-            return cellList[cellCoordinate.get()[0], cellCoordinate.get()[1]];
+            return cellArray[cellCoordinate.get()[0], cellCoordinate.get()[1]];
         }
         /// <summary>
         /// Gets all cells adjacent to this one, including diagonals
@@ -135,14 +137,16 @@ namespace Minesweeper
         /// </summary>
         private void populateGrid()
         {
+            parent.SuspendLayout();
             for (int y = 0; y < gridHeight; y++)
             {
                 for (int x = 0; x < gridWidth; x++)
                 {
                     GridCell newCell = new GridCell(this, new Coordinate(x, y));
-
+                    cellArray[x, y] = newCell;
                 }
             }
+
         }
     }
     /// <summary>
@@ -244,51 +248,9 @@ namespace Minesweeper
 
         }
 
-        private int[] mineButtonGetAdjacent(int centreCellIndex)
-        ///<summary>
-        ///Gets cells adjacent to this one
-        ///NSEW, above, below, right, left
-        ///A value of -1 indicates there is no cell available
-        ///</summary>
-        ///<param name="centreCellIndex">The index of the centre cell</param>
-        {
-            //Default to not being available
-            int[] arrayAdjacent = { -1, -1, -1, -1 };
-            //Calculate index positions of adjacent cells, assuming they're there
-            int indexAbove = centreCellIndex - gridWidth;
-            int indexBelow = centreCellIndex + gridWidth;
-            int indexRight = centreCellIndex + 1;
-            int indexLeft = centreCellIndex - 1;
-            //Update NSEW if the cell is actually present
-            //Index wouldn't be negative
-            if (indexAbove >= 0)
-            {
-                arrayAdjacent[0] = indexAbove;
-            }
-            //Index wouldn't be greater than the total available
-            if (indexBelow < buttonList.Count)
-            {
-                arrayAdjacent[1] = indexBelow;
-            }
-            //Index wouldn't be greater than the total available, and we're in the same row
-            if ((indexRight < buttonList.Count) & ((int)(centreCellIndex / gridWidth) == (int)(indexRight / gridWidth)))
-            {
-                arrayAdjacent[2] = indexRight;
-            }
-            //Index wouldn't be negative, and we're in the same row
-            if ((indexLeft >= 0) & ((int)(centreCellIndex / gridWidth) == (int)(indexLeft / gridWidth)))
-            {
-                arrayAdjacent[3] = indexLeft;
-            }
-            return arrayAdjacent;
-        }
-
-
-
         private void button2_Click(object sender, EventArgs e)
         {
             buttonList = new List<Button> { };
-            SuspendLayout();
             //SuspendLayout();
             for (int y = 0; y < gridWidth; y++)
             {
