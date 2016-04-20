@@ -22,8 +22,8 @@ namespace Minesweeper
         /// <summary>
         /// A coordinate
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
+        /// <param name="x">The x ordinate</param>
+        /// <param name="y">The y ordinate</param>
         public Coordinate(int x, int y)
         {
             xOrdinate = x;
@@ -60,35 +60,46 @@ namespace Minesweeper
             return new Coordinate(newX, newY);
         }
     }
+    /// <summary>
+    /// A grid of cells. Each cell keeps track of its own state.
+    /// </summary>
     public class GameGrid
     {
-        /// <summary>
-        /// A grid of cells. Each cell keeps track of its own state.
-        /// </summary>
+        /// <summary>The array of <typeparamref name="GridCell"/> instances making up the game board</summary>
         private GridCell[,] cellList;
+        /// <summary>The dimensions of the buttons on screen that represent the cells</summary>
         public int buttonDimensions;
+        /// <summary>The width of the game board, in cells</summary>
         public int gridWidth;
+        /// <summary>The height of the game board, in cells</summary>
         public int gridHeight;
+        /// <summary>
+        /// A grid of cells that make up a game. Each cell will keep track of its own state.
+        /// </summary>
+        /// <param name="width">The width of the game board in cells</param>
+        /// <param name="height">The height of the game board in cells</param>
         public GameGrid(int width, int height)
         {
             gridWidth = width;
             gridHeight = height;
             cellList = new GridCell[gridWidth, gridHeight];
         }
-
+        /// <summary>
+        /// Gets a specific cell from <paramref name="cellList"/> based on a specified location
+        /// </summary>
+        /// <param name="cellCoordinate"></param>
+        /// <returns>Cell from <paramref name="cellList"/></returns>
         public GridCell getCell(Coordinate cellCoordinate)
         {
             return cellList[cellCoordinate.get()[0], cellCoordinate.get()[1]];
         }
-
+        /// <summary>
+        /// Gets all cells adjacent to this one, including diagonals
+        /// </summary>
+        /// <param name="centreCellCoordinate">The coordinate of the cell to search around</param>
+        /// <returns>Adjacent cells in a list - moves left, right, down, left, right, etc.</returns>
         public List<GridCell> getAdjacentCells(Coordinate centreCellCoordinate)
         {
-            ///<summary>
-            ///Gets all cells adjacent to this one
-            ///</summary>
-            ///<returns>
-            ///Adjacent cells in a list - moves left, right, down, left, right, etc
-            /// </returns>
             //Create empty list
             List<GridCell> adjacentCellsList = new List<GridCell> { };
             //Move left, right, down, left, right, etc. to populate adjacent cells list
@@ -119,7 +130,9 @@ namespace Minesweeper
             }
             return adjacentCellsList;
         }
-
+        /// <summary>
+        /// Creates the actual grid of cells
+        /// </summary>
         private void populateGrid()
         {
             for (int y = 0; y < gridHeight; y++)
@@ -132,21 +145,37 @@ namespace Minesweeper
             }
         }
     }
+    /// <summary>
+    /// A single cell in an instance of <typeparamref name="GameGrid"/>
+    /// </summary>
     public class GridCell
     {
+        /// <summary>The <typeparamref name="GameGrid"/> this cell belongs to</summary>
         GameGrid parent;
+        /// <summary>The GUI button that the user will see</summary>
         Button cellButton;
+        /// <summary>Whether or not the cell is actually mined</summary>
         bool mined;
+        /// <summary>The current state of the cell, i.e., how it will appear (and behave, to an extent)</summary>
         cellState state;
+        /// <summary>The position in the <typeparamref name="GameGrid"/> array this cell exists in</summary>
         Coordinate position;
-
-        public GridCell(GameGrid parentGrid, Coordinate assignedIndex)
+        /// <summary>
+        /// Sets the basic information about the cell. Much of the rest of the work is handled automatically.
+        /// </summary>
+        /// <param name="parentGrid"></param>
+        /// <param name="gridLocation"></param>
+        public GridCell(GameGrid parentGrid, Coordinate gridLocation)
         {
             parent = parentGrid;
             state = cellState.normal;
             mined = false;
-            position = assignedIndex;
+            position = gridLocation;
         }
+        /// <summary>
+        /// Creates the GUI button that the user will see, and that will receive input
+        /// </summary>
+        /// <returns>A <typeparamref name="Button"/> instance representing this <typeparamref name="GridCell"/></returns>
         private Button CreateButton()
         {
             Button newButton = new Button;
@@ -164,6 +193,12 @@ namespace Minesweeper
 
             return newButton;
         }
+        /// <summary>
+        /// <para>Sweeps the cell for mines</para>
+        /// <para>If there are mines, the game is over</para>
+        /// <para>If there are no mines, the number of adjacent mines is displayed</para>
+        /// <para>If there are no adjacent mines, adjacent cells are activated</para>
+        /// </summary>
         private void Activate()
         {
             if (mined)
@@ -176,12 +211,12 @@ namespace Minesweeper
                 GridCell[] adjacentCells = parent.getAdjacentCells(position);
             }
         }
+        ///<summary>
+        ///Cycles between the three possible states of the button before it's pushed
+        ///Normal -> Flagged -> Unsure -> ...
+        ///</summary>
         private void ToggleFlagState()
         {
-            ///<summary>
-            ///Cycles between the three possible states of the button before it's pushed
-            ///Normal -> Flagged -> Unsure -> ...
-            ///</summary>
             //Only toggle if we've not been clicked already
             if (state > cellState.unsure)
             {
@@ -194,6 +229,7 @@ namespace Minesweeper
                 state = cellState.normal;
             }
         }
+
         private void ButtonMouseClick(object sender, EventArgs e)
         {
 
