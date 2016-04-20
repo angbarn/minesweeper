@@ -64,9 +64,19 @@ namespace Minesweeper
         /// <returns>A single coordinate - the result of adding the two together</returns>
         public static Coordinate operator +(Coordinate c1, Coordinate c2)
         {
-            int newX = c1.get()[0] + c2.get()[1];
-            int newY = c1.get()[0] + c2.get()[1];
+            int newX = c1.get()[0] + c2.get()[0];
+            int newY = c1.get()[1] + c2.get()[1];
             return new Coordinate(newX, newY);
+        }
+
+        public static bool operator ==(Coordinate c1, Coordinate c2)
+        {
+            return ((c1.get()[0] == c2.get()[0]) & (c1.get()[1] == c2.get()[1]));
+        }
+
+        public static bool operator !=(Coordinate c1, Coordinate c2)
+        {
+            return (!((c1.get()[0] == c2.get()[0]) & (c1.get()[1] == c2.get()[1])));
         }
     }
     /// <summary>
@@ -105,9 +115,21 @@ namespace Minesweeper
         /// Gets a specific cell from <paramref name="cellList"/> based on a specified location
         /// </summary>
         /// <param name="cellCoordinate"></param>
-        /// <returns>Cell from <paramref name="cellList"/></returns>
+        /// <returns>Cell from <paramref name="cellList"/>, or null if one at the specified coordinate doesn't exist</returns>
         public GridCell getCell(Coordinate cellCoordinate)
         {
+            int x = cellCoordinate.get()[0];
+            int y = cellCoordinate.get()[1];
+            //Make sure the cell exists before attempting to return it
+            if ((x < 0) | (x >= gridWidth))
+            {
+                return null;
+            }
+            if ((y < 0) | (y >= gridHeight))
+            {
+                return null;
+            }
+            //Return it if it exists
             return cellArray[cellCoordinate.get()[0], cellCoordinate.get()[1]];
         }
         /// <summary>
@@ -124,25 +146,18 @@ namespace Minesweeper
             {
                 for (int x = -1; x < 2; x++)
                 {
-                    Coordinate offsetCoordinate = new Coordinate(x, y);
-                    //If it's the centre cell, ignore it
-                    if ((x == 0) & (y == 0))
+                    Coordinate newAdjacentCellCoordinate = new Coordinate(x, y) + centreCellCoordinate;
+                    GridCell newAdjacentCell = getCell(newAdjacentCellCoordinate);
+                    Console.WriteLine(newAdjacentCellCoordinate == centreCellCoordinate);
+                    if (newAdjacentCellCoordinate == centreCellCoordinate)
                     {
                         continue;
                     }
-                    //If it's too far left or right, ignore it
-                    if ((x < 0) | (x >= gridWidth))
+                    if (newAdjacentCell == null)
                     {
                         continue;
                     }
-                    //If it's too far up or down, ignore it
-                    if ((y < 0) | (y >= gridHeight))
-                    {
-                        continue;
-                    }
-                    //It's passed all tests - add it to the adjacent cells list
-                    Coordinate newAdjacentCellCoordinate = offsetCoordinate + centreCellCoordinate;
-                    adjacentCellsList.Add(getCell(newAdjacentCellCoordinate));
+                    adjacentCellsList.Add(newAdjacentCell);
                 }
             }
             return adjacentCellsList;
@@ -190,13 +205,15 @@ namespace Minesweeper
             state = cellState.normal;
             mined = false;
             position = gridLocation;
-            cellButton = CreateButton();
+            cellButton = createButton();
+
+            cellStateUpdate();
         }
         /// <summary>
         /// Creates the GUI button that the user will see, and that will receive input
         /// </summary>
         /// <returns>A <typeparamref name="Button"/> instance representing this <typeparamref name="GridCell"/></returns>
-        private Button CreateButton()
+        private Button createButton()
         {
             Button newButton = new Button();
 
@@ -210,7 +227,7 @@ namespace Minesweeper
             newButton.UseVisualStyleBackColor = true;
             newButton.TabIndex = 0;
 
-            newButton.MouseClick += new MouseEventHandler(ButtonMouseClick);
+            newButton.MouseDown += new MouseEventHandler(buttonMouseClick);
 
             parent.parentForm.Controls.Add(newButton);
 
@@ -222,23 +239,35 @@ namespace Minesweeper
         /// <para>If there are no mines, the number of adjacent mines is displayed</para>
         /// <para>If there are no adjacent mines, adjacent cells are activated</para>
         /// </summary>
-        private void Activate()
+        private void activate()
         {
-            if (mined)
+            if (state == cellState.normal)
             {
-                Console.WriteLine("This cell was mined");
-                state = cellState.exploded;
-            }
-            else
-            {
-                List<GridCell> adjacentCells = parent.getAdjacentCells(position);
+                if (mined)
+                {
+                    Console.WriteLine("This cell was mined");
+                    state = cellState.exploded;
+                }
+                else
+                {
+                    List<GridCell> adjacentCells = parent.getAdjacentCells(position);
+                    if (adjacentCells.Count == 0)
+                    {
+                        state = cellState.empty;
+                    }
+                    else
+                    {
+                        state = cellState.numbered;
+                    }
+                }
+                cellStateUpdate();
             }
         }
         ///<summary>
         ///Cycles between the three possible states of the button before it's pushed
         ///Normal -> Flagged -> Unsure -> ...
         ///</summary>
-        private void ToggleFlagState()
+        private void flagStateToggle()
         {
             //Only toggle if we've not been clicked already
             if (state > cellState.unsure)
@@ -251,11 +280,48 @@ namespace Minesweeper
             {
                 state = cellState.normal;
             }
+            cellStateUpdate();
         }
 
-        private void ButtonMouseClick(object sender, EventArgs e)
+        private void cellStateUpdate()
         {
-            Console.WriteLine("Clicked");
+            cellButton.Show();
+            switch (state)
+            {
+                case cellState.empty:
+                    cellButton.Hide();
+                    cellButton.Text = "";
+                    break;
+                case cellState.exploded:
+                    cellButton.Text = "";
+                    break;
+                case cellState.flagged:
+                    cellButton.Text = "F";
+                    break;
+                case cellState.normal:
+                    cellButton.Text = "";
+                    break;
+                case cellState.numbered:
+                    List<GridCell> adjacentCells = parent.getAdjacentCells(position);
+                    cellButton.Text = adjacentCells.Count.ToString();
+                    break;
+                case cellState.unsure:
+                    cellButton.Text = "?";
+                    break;
+            }
+        }
+
+        private void buttonMouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                activate();
+            }
+            if (e.Button == MouseButtons.Right)
+            {
+                flagStateToggle();
+            }
+            Console.WriteLine(e.Button);
         }
     }
 }

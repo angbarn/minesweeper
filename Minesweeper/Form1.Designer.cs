@@ -53,8 +53,6 @@ namespace Minesweeper
         }
 
         #endregion
-
-        private System.Windows.Forms.Button buttonNew;
     }
 }
 
