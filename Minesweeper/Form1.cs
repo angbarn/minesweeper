@@ -11,6 +11,27 @@ using System.Windows.Forms;
 namespace Minesweeper
 {
     enum cellState { normal, flagged, unsure, empty, numbered, exploded };
+    public class Coordinate
+    {
+        private int xOrdinate;
+        private int yOrdinate;
+
+        public Coordinate(int x, int y)
+        {
+            xOrdinate = x;
+            yOrdinate = y;
+        }
+
+        public int[] get()
+        {
+            return new int[] { xOrdinate, yOrdinate };
+        }
+        public void set(int x, int y)
+        {
+            xOrdinate = x;
+            yOrdinate = y;
+        }
+    }
     public class GameGrid
     {
         List<GridCell> cellList;
@@ -21,6 +42,10 @@ namespace Minesweeper
         {
             this.gridWidth = gridWidth;
             this.gridHeight = gridHeight;
+        }
+        public GridCell[] GetAdjacentCells(index)
+        {
+            
         }
     }
     public class GridCell
@@ -65,7 +90,7 @@ namespace Minesweeper
             }
             else
             {
-                
+                GridCell[] adjacentCells = parent.GetAdjacentCells(index);
             }
         }
         private void ToggleFlagState()
@@ -89,20 +114,6 @@ namespace Minesweeper
         private void ButtonMouseClick(object sender, EventArgs e)
         {
 
-        }
-
-
-        private void mineButtonClick(object sender, EventArgs e)
-        {
-            string locationString = "";
-            for (int i = 0; i < buttonList.Count; i++)
-            {
-                if (sender == buttonList[i])
-                {
-
-                }
-            }
-            Console.WriteLine(sender.ToString());
         }
     }
     public partial class Form1 : Form
