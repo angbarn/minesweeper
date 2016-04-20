@@ -202,6 +202,17 @@ namespace Minesweeper
             }
             parentForm.ResumeLayout();
         }
+
+        public void gameEnd()
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                for (int x = 0; x < gridWidth; x++)
+                {
+                    cellArray[x, y].activate();
+                }
+            }
+        }
     }
     /// <summary>
     /// A single cell in an instance of <typeparamref name="GameGrid"/>
@@ -264,13 +275,14 @@ namespace Minesweeper
         /// <para>If there are no mines, the number of adjacent mines is displayed</para>
         /// <para>If there are no adjacent mines, adjacent cells are activated</para>
         /// </summary>
-        private void activate()
+        public void activate()
         {
             if (state == cellState.normal)
             {
                 if (mined)
                 {
                     state = cellState.exploded;
+                    parent.gameEnd();
                 }
                 else
                 {
