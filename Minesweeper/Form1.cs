@@ -247,6 +247,7 @@ namespace Minesweeper
 
             newButton.Name = "button_" + locationX.ToString() + "_" + locationY.ToString();
             newButton.Size = new Size(parent.buttonDimensions, parent.buttonDimensions);
+            newButton.BackgroundImageLayout = ImageLayout.Zoom;
             newButton.Text = "-";
             newButton.UseVisualStyleBackColor = true;
             newButton.TabIndex = 0;
@@ -269,7 +270,6 @@ namespace Minesweeper
             {
                 if (mined)
                 {
-                    Console.WriteLine("This cell was mined");
                     state = cellState.exploded;
                 }
                 else
@@ -317,6 +317,7 @@ namespace Minesweeper
         private void cellStateUpdate()
         {
             cellButton.Show();
+            cellButton.BackgroundImage = null;
             switch (state)
             {
                 case cellState.empty:
@@ -327,7 +328,8 @@ namespace Minesweeper
                     cellButton.Text = "*";
                     break;
                 case cellState.flagged:
-                    cellButton.Text = "F";
+                    cellButton.Text = "";
+                    cellButton.BackgroundImage = Properties.Resources.flag;
                     break;
                 case cellState.normal:
                     cellButton.Text = "";
@@ -337,7 +339,7 @@ namespace Minesweeper
                     cellButton.Text = adjacentCells.Count.ToString();
                     break;
                 case cellState.unsure:
-                    cellButton.Text = "?";
+                    cellButton.BackgroundImage = Properties.Resources.questionmark;
                     break;
             }
         }
@@ -368,7 +370,6 @@ namespace Minesweeper
             {
                 flagStateToggle();
             }
-            Console.WriteLine(e.Button);
         }
     }
 }
