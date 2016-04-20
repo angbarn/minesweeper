@@ -248,5 +248,10 @@ namespace Minesweeper
                 state = cellState.normal;
             }
         }
+
+        private void ButtonMouseClick(object sender, EventArgs e)
+        {
+
+        }
     }
 }
