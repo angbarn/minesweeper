@@ -155,7 +155,6 @@ namespace Minesweeper
             {
                 for (int x = 0; x < gridWidth; x++)
                 {
-                    Console.WriteLine(x.ToString(), y.ToString());
                     GridCell newCell = new GridCell(this, new Coordinate(x, y));
                     cellArray[x, y] = newCell;
                 }
@@ -189,7 +188,6 @@ namespace Minesweeper
             state = cellState.normal;
             mined = false;
             position = gridLocation;
-            cellButton = CreateButton();
         }
         /// <summary>
         /// Creates the GUI button that the user will see, and that will receive input
