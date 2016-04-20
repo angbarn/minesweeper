@@ -17,7 +17,7 @@ namespace Minesweeper
         public Form1()
         {
             InitializeComponent();
-            GameGrid gameBoard = new GameGrid(this, 10, 10);
+            GameGrid gameBoard = new GameGrid(this, 5, 10, 10);
         }
     }
     /// <summary>
@@ -92,6 +92,8 @@ namespace Minesweeper
         public int gridWidth;
         /// <summary>The height of the game board, in cells</summary>
         public int gridHeight;
+        /// <summary>The number of mines of the board</summary>
+        private int mineCount;
         /// <summary>The parent <typeparamref name="Form"/> of this instance</summary>
         public Form1 parentForm;
 
@@ -100,11 +102,12 @@ namespace Minesweeper
         /// </summary>
         /// <param name="width">The width of the game board in cells</param>
         /// <param name="height">The height of the game board in cells</param>
-        public GameGrid(Form1 parent, int width, int height)
+        public GameGrid(Form1 parent, int mines, int width, int height)
         {
             parentForm = parent;
             gridWidth = width;
             gridHeight = height;
+            mineCount = mines;
             cellArray = new GridCell[gridWidth, gridHeight];
 
             buttonDimensions = 32;
@@ -137,7 +140,7 @@ namespace Minesweeper
         /// </summary>
         /// <param name="centreCellCoordinate">The coordinate of the cell to search around</param>
         /// <returns>Adjacent cells in a list - moves left, right, down, left, right, etc.</returns>
-        public List<GridCell> getAdjacentCells(Coordinate centreCellCoordinate)
+        public List<GridCell> getAdjacentCells(Coordinate centreCellCoordinate, bool onlyMined = true)
         {
             //Create empty list
             List<GridCell> adjacentCellsList = new List<GridCell> { };
@@ -147,17 +150,17 @@ namespace Minesweeper
                 for (int x = -1; x < 2; x++)
                 {
                     Coordinate newAdjacentCellCoordinate = new Coordinate(x, y) + centreCellCoordinate;
-                    GridCell newAdjacentCell = getCell(newAdjacentCellCoordinate);
-                    Console.WriteLine(newAdjacentCellCoordinate == centreCellCoordinate);
+                    GridCell adjacentCell = getCell(newAdjacentCellCoordinate);
                     if (newAdjacentCellCoordinate == centreCellCoordinate)
                     {
                         continue;
                     }
-                    if (newAdjacentCell == null)
+                    if (adjacentCell == null)
                     {
                         continue;
                     }
-                    adjacentCellsList.Add(newAdjacentCell);
+                    if ((onlyMined) & (adjacentCell.isMined()))
+                    adjacentCellsList.Add(adjacentCell);
                 }
             }
             return adjacentCellsList;
@@ -167,13 +170,30 @@ namespace Minesweeper
         /// </summary>
         private void populateGrid()
         {
+            //Generate random locations for mines
+            Random randomIndexGenerator = new Random();
+            Coordinate[] mineLocations = new Coordinate[mineCount];
+            for (int i = 0; i < mineCount; i++)
+            {
+                mineLocations[i] = new Coordinate(randomIndexGenerator.Next(gridWidth), randomIndexGenerator.Next(gridHeight));
+            }
 
             parentForm.SuspendLayout();
             for (int y = 0; y < gridHeight; y++)
             {
                 for (int x = 0; x < gridWidth; x++)
                 {
-                    GridCell newCell = new GridCell(this, new Coordinate(x, y));
+                    Coordinate location = new Coordinate(x, y);
+                    GridCell newCell = new GridCell(this, location);
+
+                    for (int i = 0; i < mineLocations.Length; i++)
+                    {
+                        if (location == mineLocations[i])
+                        {
+                            newCell.mineCell();
+                        }
+                    }
+
                     cellArray[x, y] = newCell;
                 }
             }
@@ -255,6 +275,10 @@ namespace Minesweeper
                     if (adjacentCells.Count == 0)
                     {
                         state = cellState.empty;
+                        for (int i = 0; i < adjacentCells.Count; i++)
+                        {
+                            adjacentCells[i].activate();
+                        }
                     }
                     else
                     {
@@ -283,7 +307,9 @@ namespace Minesweeper
             }
             cellStateUpdate();
         }
-
+        /// <summary>
+        /// Updates the appearance of the button based on its state
+        /// </summary>
         private void cellStateUpdate()
         {
             cellButton.Show();
@@ -294,7 +320,7 @@ namespace Minesweeper
                     cellButton.Text = "";
                     break;
                 case cellState.exploded:
-                    cellButton.Text = "";
+                    cellButton.Text = "*";
                     break;
                 case cellState.flagged:
                     cellButton.Text = "F";
@@ -310,6 +336,22 @@ namespace Minesweeper
                     cellButton.Text = "?";
                     break;
             }
+        }
+        /// <summary>
+        /// Marks this cell as mined
+        /// </summary>
+        public void mineCell()
+        {
+            mined = true;
+        }
+        /// <summary>
+        /// Whether the cell is mined or not
+        /// </summary>
+        /// <returns>true if cell is mined, false if not</returns>
+        /// <remarks>This is only necessary because the data is encapsulated</remarks>
+        public bool isMined()
+        {
+            return mined;
         }
 
         private void buttonMouseClick(object sender, MouseEventArgs e)
