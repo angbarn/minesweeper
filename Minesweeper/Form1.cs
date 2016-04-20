@@ -188,6 +188,7 @@ namespace Minesweeper
             state = cellState.normal;
             mined = false;
             position = gridLocation;
+            cellButton = CreateButton();
         }
         /// <summary>
         /// Creates the GUI button that the user will see, and that will receive input
