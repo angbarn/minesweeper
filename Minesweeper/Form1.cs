@@ -167,7 +167,8 @@ namespace Minesweeper
         /// </summary>
         private void populateGrid()
         {
-            //parentForm.SuspendLayout();
+
+            parentForm.SuspendLayout();
             for (int y = 0; y < gridHeight; y++)
             {
                 for (int x = 0; x < gridWidth; x++)
@@ -176,7 +177,7 @@ namespace Minesweeper
                     cellArray[x, y] = newCell;
                 }
             }
-            //parentForm.ResumeLayout();
+            parentForm.ResumeLayout();
         }
     }
     /// <summary>
