@@ -96,6 +96,8 @@ namespace Minesweeper
             gridWidth = width;
             gridHeight = height;
             cellArray = new GridCell[gridWidth, gridHeight];
+
+            buttonDimensions = 32;
             //Create the grid
             populateGrid();
         }
@@ -150,7 +152,7 @@ namespace Minesweeper
         /// </summary>
         private void populateGrid()
         {
-            parentForm.SuspendLayout();
+            //parentForm.SuspendLayout();
             for (int y = 0; y < gridHeight; y++)
             {
                 for (int x = 0; x < gridWidth; x++)
@@ -159,7 +161,7 @@ namespace Minesweeper
                     cellArray[x, y] = newCell;
                 }
             }
-            parentForm.ResumeLayout(false);
+            //parentForm.ResumeLayout();
         }
     }
     /// <summary>
@@ -203,9 +205,10 @@ namespace Minesweeper
             newButton.Location = new Point(locationX, locationY);
 
             newButton.Name = "button_" + locationX.ToString() + "_" + locationY.ToString();
-            newButton.Size = new Size(locationX, locationY);
+            newButton.Size = new Size(parent.buttonDimensions, parent.buttonDimensions);
             newButton.Text = "-";
             newButton.UseVisualStyleBackColor = true;
+            newButton.TabIndex = 0;
 
             newButton.MouseClick += new MouseEventHandler(ButtonMouseClick);
 
@@ -252,7 +255,7 @@ namespace Minesweeper
 
         private void ButtonMouseClick(object sender, EventArgs e)
         {
-
+            Console.WriteLine("Clicked");
         }
     }
 }
