@@ -38,25 +38,14 @@ namespace Minesweeper
         /// </summary>
         private void InitializeComponent()
         {
-            this.buttonStart = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // buttonStart
-            // 
-            this.buttonStart.Location = new System.Drawing.Point(16, 16);
-            this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(96, 48);
-            this.buttonStart.TabIndex = 0;
-            this.buttonStart.Text = "Start";
-            this.buttonStart.UseVisualStyleBackColor = true;
-            this.buttonStart.Click += new System.EventHandler(this.button2_Click);
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1210, 787);
-            this.Controls.Add(this.buttonStart);
+            this.ClientSize = new System.Drawing.Size(605, 409);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -66,7 +55,6 @@ namespace Minesweeper
         #endregion
 
         private System.Windows.Forms.Button buttonNew;
-        private System.Windows.Forms.Button buttonStart;
     }
 }
 

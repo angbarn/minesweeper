@@ -11,6 +11,15 @@ using System.Windows.Forms;
 namespace Minesweeper
 {
     enum cellState { normal, flagged, unsure, empty, numbered, exploded };
+
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+            GameGrid gameBoard = new GameGrid(this, 10, 10);
+        }
+    }
     /// <summary>
     /// A coordinate
     /// </summary>
@@ -73,18 +82,22 @@ namespace Minesweeper
         public int gridWidth;
         /// <summary>The height of the game board, in cells</summary>
         public int gridHeight;
-        private Form1 parent;
+        /// <summary>The parent <typeparamref name="Form"/> of this instance</summary>
+        public Form1 parentForm;
 
         /// <summary>
         /// A grid of cells that make up a game. Each cell will keep track of its own state.
         /// </summary>
         /// <param name="width">The width of the game board in cells</param>
         /// <param name="height">The height of the game board in cells</param>
-        public GameGrid(int width, int height)
+        public GameGrid(Form1 parent, int width, int height)
         {
+            parentForm = parent;
             gridWidth = width;
             gridHeight = height;
             cellArray = new GridCell[gridWidth, gridHeight];
+            //Create the grid
+            populateGrid();
         }
         /// <summary>
         /// Gets a specific cell from <paramref name="cellList"/> based on a specified location
@@ -137,7 +150,7 @@ namespace Minesweeper
         /// </summary>
         private void populateGrid()
         {
-            parent.SuspendLayout();
+            parentForm.SuspendLayout();
             for (int y = 0; y < gridHeight; y++)
             {
                 for (int x = 0; x < gridWidth; x++)
@@ -182,7 +195,7 @@ namespace Minesweeper
         /// <returns>A <typeparamref name="Button"/> instance representing this <typeparamref name="GridCell"/></returns>
         private Button CreateButton()
         {
-            Button newButton = new Button;
+            Button newButton = new Button();
 
             int locationX = parent.buttonDimensions * position.get()[0];
             int locationY = parent.buttonDimensions * position.get()[1];
@@ -194,6 +207,8 @@ namespace Minesweeper
             newButton.UseVisualStyleBackColor = true;
 
             newButton.MouseClick += new MouseEventHandler(ButtonMouseClick);
+
+            parent.parentForm.Controls.Add(newButton);
 
             return newButton;
         }
@@ -212,7 +227,7 @@ namespace Minesweeper
             }
             else
             {
-                GridCell[] adjacentCells = parent.getAdjacentCells(position);
+                List<GridCell> adjacentCells = parent.getAdjacentCells(position);
             }
         }
         ///<summary>
@@ -237,44 +252,6 @@ namespace Minesweeper
         private void ButtonMouseClick(object sender, EventArgs e)
         {
 
-        }
-    }
-    public partial class Form1 : Form
-    {
-        public Form1()
-        {
-            InitializeComponent();
-            GameGrid gameBoard = new GameGrid(10, 10);
-
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            buttonList = new List<Button> { };
-            //SuspendLayout();
-            for (int y = 0; y < gridWidth; y++)
-            {
-                for (int x = 0; x < gridHeight; x++)
-                {
-                    buttonNew = new Button();
-                    //SuspendLayout();
-                    int locationX = buttonDimensions + x * buttonDimensions;
-                    int locationY = buttonDimensions + y * buttonDimensions;
-                    buttonNew.Location = new System.Drawing.Point(locationX, locationY);
-                    buttonNew.Name = "button_" + x.ToString() + "_" + y.ToString();
-                    buttonNew.Size = new System.Drawing.Size(buttonDimensions, buttonDimensions);
-                    buttonNew.TabIndex = 0;
-                    buttonNew.Text = x.ToString();
-                    buttonNew.UseVisualStyleBackColor = true;
-
-                    buttonNew.Click += new EventHandler(mineButtonClick);
-                    //newButton.Click += new System.EventHandler(newButton);
-
-                    buttonList.Add(buttonNew);
-                    Controls.Add(buttonNew);
-                }
-            }
-            ResumeLayout(false);
         }
     }
 }
