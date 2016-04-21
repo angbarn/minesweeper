@@ -10,10 +10,10 @@ using System.Windows.Forms;
 
 namespace Minesweeper
 {
-    public partial class Form2 : Form
+    internal partial class Form2 : Form
     {
         Form1 parentForm;
-        public Form2(Form1 parent)
+        internal Form2(Form1 parent)
         {
             parentForm = parent;
             InitializeComponent();
@@ -28,13 +28,15 @@ namespace Minesweeper
         {
             labelGridWidth.Text = "Grid Width: " + scrollWidth.Value;
             labelGridHeight.Text = "Grid Height: " + scrollHeight.Value;
-            labelMineCount.Text = "Mine Count: " + scrollMines.Value;
-            scrollMines.Maximum =  scrollWidth.Value * scrollHeight.Value;
+            labelMineCount.Text = "Mines: " + scrollMines.Value + "%";
         }
+
+        
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            parentForm.updateOptions(scrollWidth.Value, scrollHeight.Value, scrollMines.Value);
+            float minesValue = ((float)scrollMines.Value / 100) * (scrollHeight.Value * scrollHeight.Value);
+            parentForm.updateOptions(scrollWidth.Value, scrollHeight.Value, (int)minesValue);
             Close();
         }
     }

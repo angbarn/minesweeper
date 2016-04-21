@@ -10,15 +10,15 @@ using System.Windows.Forms;
 
 namespace Minesweeper
 {
-    public enum cellState { normal, flagged, unsure, empty, numbered, exploded };
+    internal enum cellState { normal, flagged, unsure, empty, numbered, exploded };
 
-    public partial class Form1 : Form
+    internal partial class Form1 : Form
     {
         int cellCountWidth;
         int cellCountHeight;
         int mineCount;
         GameGrid gameBoard;
-        public Form1()
+        internal Form1()
         {
             cellCountWidth = 10;
             cellCountHeight = 10;
@@ -27,7 +27,7 @@ namespace Minesweeper
             gameBoard = new GameGrid(this, mineCount, cellCountWidth, cellCountHeight);
         }
 
-        public void updateOptions(int xDimension, int yDimension, int mineDimension)
+        internal void updateOptions(int xDimension, int yDimension, int mineDimension)
         {
             cellCountWidth = xDimension;
             cellCountHeight = yDimension;
@@ -58,7 +58,7 @@ namespace Minesweeper
             labelInformation.Text = "Minesweeper";
         }
 
-        public void endGame(bool win)
+        internal void endGame(bool win)
         {
             if (win)
             {
@@ -73,7 +73,7 @@ namespace Minesweeper
     /// <summary>
     /// A coordinate
     /// </summary>
-    public class Coordinate
+    internal class Coordinate
     {
         private int xOrdinate;
         private int yOrdinate;
@@ -83,7 +83,7 @@ namespace Minesweeper
         /// </summary>
         /// <param name="x">The x ordinate</param>
         /// <param name="y">The y ordinate</param>
-        public Coordinate(int x, int y)
+        internal Coordinate(int x, int y)
         {
             xOrdinate = x;
             yOrdinate = y;
@@ -92,7 +92,7 @@ namespace Minesweeper
         /// Gets the coordinate
         /// </summary>
         /// <returns>An integer array, [x, y]</returns>
-        public int[] get()
+        internal int[] get()
         {
             return new int[] { xOrdinate, yOrdinate };
         }
@@ -101,7 +101,7 @@ namespace Minesweeper
         /// </summary>
         /// <param name="x">The x ordinate</param>
         /// <param name="y">The y ordinate</param>
-        public void set(int x, int y)
+        internal void set(int x, int y)
         {
             xOrdinate = x;
             yOrdinate = y;
@@ -132,29 +132,29 @@ namespace Minesweeper
     /// <summary>
     /// A grid of cells. Each cell keeps track of its own state.
     /// </summary>
-    public class GameGrid
+    internal class GameGrid
     {
         /// <summary>The array of <typeparamref name="GridCell"/> instances making up the game board</summary>
         private GridCell[,] cellArray;
         /// <summary>The dimensions of the buttons on screen that represent the cells</summary>
-        public int buttonDimensions;
+        internal int buttonDimensions;
         /// <summary>The width of the game board, in cells</summary>
-        public int gridWidth;
+        internal int gridWidth;
         /// <summary>The height of the game board, in cells</summary>
-        public int gridHeight;
+        internal int gridHeight;
         /// <summary>The number of mines of the board</summary>
         private int mineCount;
         /// <summary>The parent <typeparamref name="Form"/> of this instance</summary>
-        public Form1 parentForm;
+        internal Form1 parentForm;
         /// <summary>Used to make the controls auto size to the window correctly</summary>
-        public TableLayoutPanel layoutGrid;
+        internal TableLayoutPanel layoutGrid;
 
         /// <summary>
         /// A grid of cells that make up a game. Each cell will keep track of its own state.
         /// </summary>
         /// <param name="width">The width of the game board in cells</param>
         /// <param name="height">The height of the game board in cells</param>
-        public GameGrid(Form1 parent, int mines, int width, int height)
+        internal GameGrid(Form1 parent, int mines, int width, int height)
         {
             parentForm = parent;
             gridWidth = width;
@@ -186,7 +186,7 @@ namespace Minesweeper
         /// </summary>
         /// <param name="cellCoordinate"></param>
         /// <returns>Cell from <paramref name="cellList"/>, or null if one at the specified coordinate doesn't exist</returns>
-        public GridCell getCell(Coordinate cellCoordinate)
+        internal GridCell getCell(Coordinate cellCoordinate)
         {
             int x = cellCoordinate.get()[0];
             int y = cellCoordinate.get()[1];
@@ -207,7 +207,7 @@ namespace Minesweeper
         /// </summary>
         /// <param name="centreCellCoordinate">The coordinate of the cell to search around</param>
         /// <returns>Adjacent cells in a list - moves left, right, down, left, right, etc.</returns>
-        public List<GridCell> getAdjacentCells(Coordinate centreCellCoordinate, bool onlyMined = true)
+        internal List<GridCell> getAdjacentCells(Coordinate centreCellCoordinate, bool onlyMined = true)
         {
             //Create empty list
             List<GridCell> adjacentCellsList = new List<GridCell> { };
@@ -271,13 +271,18 @@ namespace Minesweeper
             parentForm.ResumeLayout();
         }
 
-        public void checkVictory()
+        internal void checkVictory()
         {
             for (int y = 0; y < gridWidth; y++)
             {
                 for (int x = 0; x < gridHeight; x++)
                 {
-                    if ((cellArray[x, y].state == cellState.normal) & (cellArray[x, y].isMined()))
+                    if (cellArray[x, y].state == cellState.exploded)
+                    {
+                        gameEnd(false);
+                        return;
+                    }
+                    if ((cellArray[x, y].state == cellState.normal) & !(cellArray[x, y].isMined()))
                     {
                         return;
                     }
@@ -292,7 +297,7 @@ namespace Minesweeper
         /// Ends the game
         /// </summary>
         /// <param name="win">Whether the game ended in defeat or victory</param>
-        public void gameEnd(bool win)
+        internal void gameEnd(bool win)
         {
             for (int y = 0; y < gridHeight; y++)
             {
@@ -304,7 +309,7 @@ namespace Minesweeper
             parentForm.endGame(win);
         }
 
-        public void delete()
+        internal void delete()
         {
             for (int y = 0; y < gridHeight; y++)
             {
@@ -318,7 +323,7 @@ namespace Minesweeper
     /// <summary>
     /// A single cell in an instance of <typeparamref name="GameGrid"/>
     /// </summary>
-    public class GridCell
+    internal class GridCell
     {
         /// <summary>The <typeparamref name="GameGrid"/> this cell belongs to</summary>
         GameGrid parent;
@@ -327,7 +332,7 @@ namespace Minesweeper
         /// <summary>Whether or not the cell is actually mined</summary>
         bool mined;
         /// <summary>The current state of the cell, i.e., how it will appear (and behave, to an extent)</summary>
-        public cellState state;
+        internal cellState state;
         /// <summary>The position in the <typeparamref name="GameGrid"/> array this cell exists in</summary>
         Coordinate position;
         /// <summary>
@@ -335,7 +340,7 @@ namespace Minesweeper
         /// </summary>
         /// <param name="parentGrid"></param>
         /// <param name="gridLocation"></param>
-        public GridCell(GameGrid parentGrid, Coordinate gridLocation)
+        internal GridCell(GameGrid parentGrid, Coordinate gridLocation)
         {
             parent = parentGrid;
             state = cellState.normal;
@@ -378,7 +383,7 @@ namespace Minesweeper
         /// <para>If there are no mines, the number of adjacent mines is displayed</para>
         /// <para>If there are no adjacent mines, adjacent cells are activated</para>
         /// </summary>
-        public void activate()
+        internal void activate()
         {
             if (state == cellState.normal)
             {
@@ -462,7 +467,7 @@ namespace Minesweeper
         /// <summary>
         /// Marks this cell as mined
         /// </summary>
-        public void mineCell()
+        internal void mineCell()
         {
             mined = true;
         }
@@ -471,12 +476,12 @@ namespace Minesweeper
         /// </summary>
         /// <returns>true if cell is mined, false if not</returns>
         /// <remarks>This is only necessary because the data is encapsulated</remarks>
-        public bool isMined()
+        internal bool isMined()
         {
             return mined;
         }
 
-        public void delete()
+        internal void delete()
         {
             parent.parentForm.Controls.Remove(cellButton);
         }
