@@ -17,7 +17,7 @@ namespace Minesweeper
         public Form1()
         {
             InitializeComponent();
-            GameGrid gameBoard = new GameGrid(this, 5, 10, 10);
+            GameGrid gameBoard = new GameGrid(this, 20, 10, 10);
         }
     }
     /// <summary>
@@ -96,6 +96,8 @@ namespace Minesweeper
         private int mineCount;
         /// <summary>The parent <typeparamref name="Form"/> of this instance</summary>
         public Form1 parentForm;
+        /// <summary>Used to make the controls auto size to the window correctly</summary>
+        public TableLayoutPanel layoutGrid;
 
         /// <summary>
         /// A grid of cells that make up a game. Each cell will keep track of its own state.
@@ -110,7 +112,22 @@ namespace Minesweeper
             mineCount = mines;
             cellArray = new GridCell[gridWidth, gridHeight];
 
-            buttonDimensions = 32;
+            layoutGrid = new TableLayoutPanel();
+            layoutGrid.ColumnCount = gridWidth;
+            layoutGrid.RowCount = gridHeight;
+            layoutGrid.Dock = DockStyle.Fill;
+            layoutGrid.Location = new Point(0, 0);
+            layoutGrid.Name = "LayoutGrid";
+            for (int i = 0; i < gridWidth; i++)
+            {
+                layoutGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100 / gridWidth));
+            }
+            for (int i = 0; i < gridHeight; i++)
+            {
+                layoutGrid.RowStyles.Add(new RowStyle(SizeType.Percent, 100 / gridHeight));
+            }
+
+            buttonDimensions = 64;
             //Create the grid
             populateGrid();
         }
@@ -200,16 +217,24 @@ namespace Minesweeper
                     cellArray[x, y] = newCell;
                 }
             }
+            parentForm.Controls.Add(layoutGrid);
             parentForm.ResumeLayout();
         }
 
-        public void gameEnd()
+        public void gameEnd(bool win)
         {
-            for (int y = 0; y < gridHeight; y++)
+            if (win)
             {
-                for (int x = 0; x < gridWidth; x++)
+                Console.WriteLine("You win!");
+            }
+            else
+            {
+                for (int y = 0; y < gridHeight; y++)
                 {
-                    cellArray[x, y].activate();
+                    for (int x = 0; x < gridWidth; x++)
+                    {
+                        cellArray[x, y].activate();
+                    }
                 }
             }
         }
@@ -257,7 +282,8 @@ namespace Minesweeper
             newButton.Location = new Point(locationX, locationY);
 
             newButton.Name = "button_" + locationX.ToString() + "_" + locationY.ToString();
-            newButton.Size = new Size(parent.buttonDimensions, parent.buttonDimensions);
+            //newButton.Size = new Size(parent.buttonDimensions, parent.buttonDimensions);
+            newButton.Dock = DockStyle.Fill;
             newButton.BackgroundImageLayout = ImageLayout.Zoom;
             newButton.Text = "-";
             newButton.UseVisualStyleBackColor = true;
@@ -265,7 +291,8 @@ namespace Minesweeper
 
             newButton.MouseDown += new MouseEventHandler(buttonMouseClick);
 
-            parent.parentForm.Controls.Add(newButton);
+            parent.layoutGrid.Controls.Add(newButton, position.get()[0], position.get()[1]);
+            //parent.parentForm.Controls.Add(newButton);
 
             return newButton;
         }
@@ -282,7 +309,7 @@ namespace Minesweeper
                 if (mined)
                 {
                     state = cellState.exploded;
-                    parent.gameEnd();
+                    parent.gameEnd(false);
                 }
                 else
                 {
