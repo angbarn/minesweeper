@@ -46,7 +46,7 @@ namespace Minesweeper
         
         private void buttonOptions_Click(object sender, EventArgs e)
         {
-            Form2 settings = new Form2(this);
+            Form2 settings = new Form2(this, cellCountWidth, cellCountHeight, mineCount);
             settings.Show();
         }
 
