@@ -10,14 +10,64 @@ using System.Windows.Forms;
 
 namespace Minesweeper
 {
-    enum cellState { normal, flagged, unsure, empty, numbered, exploded };
+    public enum cellState { normal, flagged, unsure, empty, numbered, exploded };
 
     public partial class Form1 : Form
     {
+        int cellCountWidth;
+        int cellCountHeight;
+        int mineCount;
+        GameGrid gameBoard;
         public Form1()
         {
+            cellCountWidth = 10;
+            cellCountHeight = 10;
+            mineCount = 10;
             InitializeComponent();
-            GameGrid gameBoard = new GameGrid(this, 20, 10, 10);
+            gameBoard = new GameGrid(this, mineCount, cellCountWidth, cellCountHeight);
+        }
+
+        public void updateOptions(int xDimension, int yDimension, int mineDimension)
+        {
+            cellCountWidth = xDimension;
+            cellCountHeight = yDimension;
+            mineCount = mineDimension;
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+        
+        private void buttonOptions_Click(object sender, EventArgs e)
+        {
+            Form2 settings = new Form2(this);
+            settings.Show();
+        }
+
+        private void buttonNewGame_Click_1(object sender, EventArgs e)
+        {
+            gameBoard.delete();
+            panelPrimary.Controls.Remove(gameBoard.layoutGrid);
+            gameBoard = new GameGrid(this, mineCount, cellCountWidth, cellCountHeight);
+            labelInformation.Text = "Minesweeper";
+        }
+
+        public void endGame(bool win)
+        {
+            if (win)
+            {
+                labelInformation.Text = "Congratulations!";
+            }
+            else
+            {
+                labelInformation.Text = "You lose";
+            }
         }
     }
     /// <summary>
@@ -217,24 +267,50 @@ namespace Minesweeper
                     cellArray[x, y] = newCell;
                 }
             }
-            parentForm.Controls.Add(layoutGrid);
+            parentForm.panelPrimary.Controls.Add(layoutGrid);
             parentForm.ResumeLayout();
         }
 
+        public void checkVictory()
+        {
+            for (int y = 0; y < gridWidth; y++)
+            {
+                for (int x = 0; x < gridHeight; x++)
+                {
+                    if ((cellArray[x, y].state == cellState.normal) & (cellArray[x, y].isMined()))
+                    {
+                        return;
+                    }
+                }
+            }
+            Console.WriteLine("Woohoo");
+            //Victory has been achieved
+            gameEnd(true);
+        }
+
+        /// <summary>
+        /// Ends the game
+        /// </summary>
+        /// <param name="win">Whether the game ended in defeat or victory</param>
         public void gameEnd(bool win)
         {
-            if (win)
+            for (int y = 0; y < gridHeight; y++)
             {
-                Console.WriteLine("You win!");
-            }
-            else
-            {
-                for (int y = 0; y < gridHeight; y++)
+                for (int x = 0; x < gridWidth; x++)
                 {
-                    for (int x = 0; x < gridWidth; x++)
-                    {
-                        cellArray[x, y].activate();
-                    }
+                    cellArray[x, y].activate();
+                }
+            }
+            parentForm.endGame(win);
+        }
+
+        public void delete()
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                for (int x = 0; x < gridWidth; x++)
+                {
+                    cellArray[x, y].delete();
                 }
             }
         }
@@ -251,7 +327,7 @@ namespace Minesweeper
         /// <summary>Whether or not the cell is actually mined</summary>
         bool mined;
         /// <summary>The current state of the cell, i.e., how it will appear (and behave, to an extent)</summary>
-        cellState state;
+        public cellState state;
         /// <summary>The position in the <typeparamref name="GameGrid"/> array this cell exists in</summary>
         Coordinate position;
         /// <summary>
@@ -329,6 +405,7 @@ namespace Minesweeper
                     }
                 }
                 cellStateUpdate();
+                parent.checkVictory();
             }
         }
         ///<summary>
@@ -397,6 +474,11 @@ namespace Minesweeper
         public bool isMined()
         {
             return mined;
+        }
+
+        public void delete()
+        {
+            parent.parentForm.Controls.Remove(cellButton);
         }
 
         private void buttonMouseClick(object sender, MouseEventArgs e)
