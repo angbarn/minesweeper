@@ -438,22 +438,20 @@ namespace Minesweeper
         private void cellStateUpdate()
         {
             cellButton.Show();
+            cellButton.Text = "";
             cellButton.BackgroundImage = null;
             switch (state)
             {
                 case cellState.empty:
                     cellButton.Hide();
-                    cellButton.Text = "";
                     break;
                 case cellState.exploded:
-                    cellButton.Text = "*";
+                    cellButton.BackgroundImage = Properties.Resources.seamine;
                     break;
                 case cellState.flagged:
-                    cellButton.Text = "";
                     cellButton.BackgroundImage = Properties.Resources.flag;
                     break;
                 case cellState.normal:
-                    cellButton.Text = "";
                     break;
                 case cellState.numbered:
                     List<GridCell> adjacentCells = parent.getAdjacentCells(position);

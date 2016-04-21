@@ -79,7 +79,7 @@ namespace Minesweeper
             // labelInformation
             // 
             this.labelInformation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelInformation.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelInformation.Font = new System.Drawing.Font("Segoe UI", 14F);
             this.labelInformation.Location = new System.Drawing.Point(221, 0);
             this.labelInformation.Name = "labelInformation";
             this.labelInformation.Size = new System.Drawing.Size(648, 58);
