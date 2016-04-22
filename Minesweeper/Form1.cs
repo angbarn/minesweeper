@@ -25,7 +25,7 @@ namespace Minesweeper
             cellCountHeight = 10;
             mineProbability = 0.1;
             InitializeComponent();
-            gameBoard = new GameGrid(this, mineProbability, cellCountWidth, cellCountHeight);
+            //gameBoard = new GameGrid(this, mineProbability, cellCountWidth, cellCountHeight);
         }
 
         internal void updateOptions(int xDimension, int yDimension, double mineDimension)
@@ -53,8 +53,11 @@ namespace Minesweeper
 
         private void buttonNewGame_Click_1(object sender, EventArgs e)
         {
-            gameBoard.delete();
-            panelPrimary.Controls.Remove(gameBoard.layoutGrid);
+            if (gameBoard != null)
+            {
+                gameBoard.delete();
+                panelPrimary.Controls.Remove(gameBoard.layoutGrid);
+            }
             gameBoard = new GameGrid(this, mineProbability, cellCountWidth, cellCountHeight);
             labelInformation.Text = "Minesweeper";
 
@@ -297,9 +300,9 @@ namespace Minesweeper
 
         internal void checkVictory()
         {
-            for (int y = 0; y < gridWidth; y++)
+            for (int y = 0; y < gridHeight; y++)
             {
-                for (int x = 0; x < gridHeight; x++)
+                for (int x = 0; x < gridWidth; x++)
                 {
                     if (cellArray[x, y].state == cellState.exploded)
                     {
