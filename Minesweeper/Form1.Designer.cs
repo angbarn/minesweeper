@@ -38,11 +38,14 @@ namespace Minesweeper
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonNewGame = new System.Windows.Forms.Button();
             this.labelInformation = new System.Windows.Forms.Label();
             this.buttonOptions = new System.Windows.Forms.Button();
             this.panelPrimary = new System.Windows.Forms.TableLayoutPanel();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.panelPrimary.SuspendLayout();
             this.SuspendLayout();
@@ -57,20 +60,22 @@ namespace Minesweeper
             this.tableLayoutPanel1.Controls.Add(this.labelInformation, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.buttonOptions, 2, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(4, 4);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 58F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1090, 58);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1088, 55);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // buttonNewGame
             // 
             this.buttonNewGame.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonNewGame.Location = new System.Drawing.Point(3, 3);
+            this.buttonNewGame.Location = new System.Drawing.Point(4, 4);
+            this.buttonNewGame.Margin = new System.Windows.Forms.Padding(4);
             this.buttonNewGame.Name = "buttonNewGame";
-            this.buttonNewGame.Size = new System.Drawing.Size(212, 52);
+            this.buttonNewGame.Size = new System.Drawing.Size(209, 47);
             this.buttonNewGame.TabIndex = 5;
             this.buttonNewGame.Text = "Restart Game";
             this.buttonNewGame.UseVisualStyleBackColor = true;
@@ -81,8 +86,9 @@ namespace Minesweeper
             this.labelInformation.Dock = System.Windows.Forms.DockStyle.Fill;
             this.labelInformation.Font = new System.Drawing.Font("Segoe UI", 14F);
             this.labelInformation.Location = new System.Drawing.Point(221, 0);
+            this.labelInformation.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelInformation.Name = "labelInformation";
-            this.labelInformation.Size = new System.Drawing.Size(648, 58);
+            this.labelInformation.Size = new System.Drawing.Size(644, 55);
             this.labelInformation.TabIndex = 4;
             this.labelInformation.Text = "Minesweeper";
             this.labelInformation.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -90,9 +96,10 @@ namespace Minesweeper
             // buttonOptions
             // 
             this.buttonOptions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonOptions.Location = new System.Drawing.Point(875, 3);
+            this.buttonOptions.Location = new System.Drawing.Point(873, 4);
+            this.buttonOptions.Margin = new System.Windows.Forms.Padding(4);
             this.buttonOptions.Name = "buttonOptions";
-            this.buttonOptions.Size = new System.Drawing.Size(212, 52);
+            this.buttonOptions.Size = new System.Drawing.Size(211, 47);
             this.buttonOptions.TabIndex = 1;
             this.buttonOptions.Text = "Options";
             this.buttonOptions.UseVisualStyleBackColor = true;
@@ -105,22 +112,29 @@ namespace Minesweeper
             this.panelPrimary.Controls.Add(this.tableLayoutPanel1, 0, 0);
             this.panelPrimary.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelPrimary.Location = new System.Drawing.Point(0, 0);
+            this.panelPrimary.Margin = new System.Windows.Forms.Padding(4);
             this.panelPrimary.Name = "panelPrimary";
             this.panelPrimary.RowCount = 2;
-            this.panelPrimary.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 64F));
+            this.panelPrimary.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 63F));
             this.panelPrimary.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.panelPrimary.Size = new System.Drawing.Size(1096, 770);
+            this.panelPrimary.Size = new System.Drawing.Size(1096, 769);
             this.panelPrimary.TabIndex = 1;
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1096, 770);
+            this.ClientSize = new System.Drawing.Size(1096, 769);
             this.Controls.Add(this.panelPrimary);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Minesweeper";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panelPrimary.ResumeLayout(false);
@@ -135,6 +149,7 @@ namespace Minesweeper
         private System.Windows.Forms.Button buttonNewGame;
         private System.Windows.Forms.Label labelInformation;
         public System.Windows.Forms.TableLayoutPanel panelPrimary;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

@@ -13,13 +13,13 @@ namespace Minesweeper
     internal partial class Form2 : Form
     {
         Form1 parentForm;
-        internal Form2(Form1 parent, int initialWidth, int initialHeight, int initialMines)
+        internal Form2(Form1 parent, int initialWidth, int initialHeight, double initialMines)
         {
             parentForm = parent;
             InitializeComponent();
             scrollWidth.Value = initialWidth;
             scrollHeight.Value = initialHeight;
-            scrollMines.Value = (int)(((float)initialMines / (initialWidth * initialHeight)) * 100);
+            scrollMines.Value = (int)(initialMines * 100);
             updateScrollBars();
         }
 
@@ -37,14 +37,13 @@ namespace Minesweeper
         {
             labelGridWidth.Text = "Grid Width: " + scrollWidth.Value;
             labelGridHeight.Text = "Grid Height: " + scrollHeight.Value;
-            labelMineCount.Text = "Mines: " + scrollMines.Value + "%";
+            labelMineCount.Text = "Mines: " + (scrollMines.Value).ToString() + "%";
         }
         
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            float minesValue = ((float)scrollMines.Value / 100) * (scrollHeight.Value * scrollHeight.Value);
-            parentForm.updateOptions(scrollWidth.Value, scrollHeight.Value, (int)minesValue);
+            parentForm.updateOptions(scrollWidth.Value, scrollHeight.Value, (double)(scrollMines.Value)/100);
             Close();
         }
     }

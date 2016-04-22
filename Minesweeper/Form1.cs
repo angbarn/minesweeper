@@ -16,22 +16,23 @@ namespace Minesweeper
     {
         int cellCountWidth;
         int cellCountHeight;
-        int mineCount;
+        double mineProbability;
+        int timeElapsed;
         GameGrid gameBoard;
         internal Form1()
         {
             cellCountWidth = 10;
             cellCountHeight = 10;
-            mineCount = 10;
+            mineProbability = 0.1;
             InitializeComponent();
-            gameBoard = new GameGrid(this, mineCount, cellCountWidth, cellCountHeight);
+            gameBoard = new GameGrid(this, mineProbability, cellCountWidth, cellCountHeight);
         }
 
-        internal void updateOptions(int xDimension, int yDimension, int mineDimension)
+        internal void updateOptions(int xDimension, int yDimension, double mineDimension)
         {
             cellCountWidth = xDimension;
             cellCountHeight = yDimension;
-            mineCount = mineDimension;
+            mineProbability = mineDimension;
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -43,10 +44,10 @@ namespace Minesweeper
         {
 
         }
-        
+
         private void buttonOptions_Click(object sender, EventArgs e)
         {
-            Form2 settings = new Form2(this, cellCountWidth, cellCountHeight, mineCount);
+            Form2 settings = new Form2(this, cellCountWidth, cellCountHeight, mineProbability);
             settings.Show();
         }
 
@@ -54,20 +55,49 @@ namespace Minesweeper
         {
             gameBoard.delete();
             panelPrimary.Controls.Remove(gameBoard.layoutGrid);
-            gameBoard = new GameGrid(this, mineCount, cellCountWidth, cellCountHeight);
+            gameBoard = new GameGrid(this, mineProbability, cellCountWidth, cellCountHeight);
             labelInformation.Text = "Minesweeper";
+
+            timeElapsed = -1;
+            timer1_Tick();
         }
 
         internal void endGame(bool win)
         {
+            timer1.Stop();
             if (win)
             {
-                labelInformation.Text = "Congratulations!";
+                labelInformation.Text = "Congratulations! - " + secondsToTime(timeElapsed);
             }
             else
             {
                 labelInformation.Text = "You lose";
             }
+        }
+
+        private string secondsToTime(int seconds)
+        {
+            int secondsElapsed = seconds % 60;
+            int minutesElapsed = (seconds - secondsElapsed) / 60;
+            return minutesElapsed.ToString() + ":" + secondsElapsed.ToString().PadLeft(2, '0');
+        }
+        /// <summary>
+        /// Increments seconds count by 1, and writes out the time
+        /// </summary>
+        private void timer1_Tick()
+        {
+            timeElapsed = timeElapsed + 1;
+            labelInformation.Text = secondsToTime(timeElapsed);
+            timer1.Start();
+        }
+        /// <summary>
+        /// Overload because we don't actually use any of the arguments
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            timer1_Tick();
         }
     }
     /// <summary>
@@ -143,7 +173,7 @@ namespace Minesweeper
         /// <summary>The height of the game board, in cells</summary>
         internal int gridHeight;
         /// <summary>The number of mines of the board</summary>
-        private int mineCount;
+        private double mineChance;
         /// <summary>The parent <typeparamref name="Form"/> of this instance</summary>
         internal Form1 parentForm;
         /// <summary>Used to make the controls auto size to the window correctly</summary>
@@ -154,12 +184,12 @@ namespace Minesweeper
         /// </summary>
         /// <param name="width">The width of the game board in cells</param>
         /// <param name="height">The height of the game board in cells</param>
-        internal GameGrid(Form1 parent, int mines, int width, int height)
+        internal GameGrid(Form1 parent, double mines, int width, int height)
         {
             parentForm = parent;
             gridWidth = width;
             gridHeight = height;
-            mineCount = mines;
+            mineChance = mines;
             cellArray = new GridCell[gridWidth, gridHeight];
 
             layoutGrid = new TableLayoutPanel();
@@ -242,11 +272,6 @@ namespace Minesweeper
         {
             //Generate random locations for mines
             Random randomIndexGenerator = new Random();
-            Coordinate[] mineLocations = new Coordinate[mineCount];
-            for (int i = 0; i < mineCount; i++)
-            {
-                mineLocations[i] = new Coordinate(randomIndexGenerator.Next(gridWidth), randomIndexGenerator.Next(gridHeight));
-            }
 
             parentForm.SuspendLayout();
             for (int y = 0; y < gridHeight; y++)
@@ -256,12 +281,11 @@ namespace Minesweeper
                     Coordinate location = new Coordinate(x, y);
                     GridCell newCell = new GridCell(this, location);
 
-                    for (int i = 0; i < mineLocations.Length; i++)
+                    Console.WriteLine((double)randomIndexGenerator.Next(100) / 100);
+
+                    if ((double)randomIndexGenerator.Next(100) / 100 < mineChance)
                     {
-                        if (location == mineLocations[i])
-                        {
-                            newCell.mineCell();
-                        }
+                        newCell.mineCell();
                     }
 
                     cellArray[x, y] = newCell;
