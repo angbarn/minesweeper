@@ -201,6 +201,8 @@ namespace Minesweeper
             layoutGrid.Dock = DockStyle.Fill;
             layoutGrid.Location = new Point(0, 0);
             layoutGrid.Name = "LayoutGrid";
+            //layoutGrid.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            layoutGrid.AutoSize = false;
             for (int i = 0; i < gridWidth; i++)
             {
                 layoutGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100 / gridWidth));
@@ -304,18 +306,12 @@ namespace Minesweeper
             {
                 for (int x = 0; x < gridWidth; x++)
                 {
-                    if (cellArray[x, y].state == cellState.exploded)
-                    {
-                        gameEnd(false);
-                        return;
-                    }
-                    if ((cellArray[x, y].state == cellState.normal) & !(cellArray[x, y].isMined()))
+                    if (cellArray[x, y].state != cellState.empty & cellArray[x, y].state != cellState.numbered & !cellArray[x, y].isMined())
                     {
                         return;
                     }
                 }
             }
-            Console.WriteLine("Woohoo");
             //Victory has been achieved
             gameEnd(true);
         }
